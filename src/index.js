@@ -58,16 +58,20 @@ function onLoad(entries, observer) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       page += 1;
-      fetchImages(query, page, perPage).then(({ data }) => {
-        renderGallery(data.hits);
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
-        if (data.page === data.totalHits) {
+      fetchImages(query, page, perPage)
+        .then(({ data }) => {
+          renderGallery(data.hits);
+          simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+          if (data.page === data.totalHits) {
+            observer.unobserve(refs.guard);
+          }
+        })
+        .catch(err => {
           Notiflix.Notify.failure(
             "We're sorry, but you've reached the end of search results."
           );
           observer.unobserve(refs.guard);
-        }
-      });
+        });
     }
   });
   console.log(entries);
